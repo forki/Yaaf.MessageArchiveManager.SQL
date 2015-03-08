@@ -96,7 +96,21 @@ let buildConfig =
      [ { BuildParams.WithSolution with
           // The default build
           PlatformName = "Net45"
-          SimpleBuildName = "net45" }
+          SimpleBuildName = "net45"
+          AfterBuild = fun _ ->
+            if isMono then
+              // Fix MySql.Data.Entities
+              File.Copy("build/test/net45/mysql.data.entity.EF6.dll", "build/test/net45/MySql.Data.Entity.EF6.dll", true)
+              File.Copy("build/net45/mysql.data.entity.EF6.dll", "build/net45/MySql.Data.Entity.EF6.dll", true)
+              // Delete Mono.Security.dll (use the gac version to prevent protocol errors)
+              File.Delete "build/net45/Mono.Security.dll"
+              File.Delete "build/test/net45/Mono.Security.dll" 
+          FindUnitTestDlls = fun (folder, config) -> 
+            seq {
+              if not isMono then
+                yield folder @@ "Test.Yaaf.MessageArchiveManager.SQL.dll" 
+              yield folder @@ "Test.Yaaf.MessageArchiveManager.MySQL.dll"
+             } |> Seq.map Path.GetFullPath }
        (*{ BuildParams.WithSolution with
           // The default build
           PlatformName = "Profile111"
