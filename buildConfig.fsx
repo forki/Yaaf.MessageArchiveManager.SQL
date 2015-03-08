@@ -84,7 +84,9 @@ let buildConfig =
       CreateCSharpAssemblyInfo "./src/SolutionInfo.cs" info
       )
     EnableProjectFileCreation = false
-    //GeneratedFileList =
+    GeneratedFileList =
+        [ "Yaaf.MessageArchiveManager.SQL.dll"; "Yaaf.MessageArchiveManager.SQL.xml"
+          "Yaaf.MessageArchiveManager.MySQL.dll"; "Yaaf.MessageArchiveManager.MySQL.xml" ]
     //    [ "DnDns.dll"
     //      "Mono.System.Xml.dll"
     //      "Yaaf.Xml.dll"; "Yaaf.Xml.xml"
