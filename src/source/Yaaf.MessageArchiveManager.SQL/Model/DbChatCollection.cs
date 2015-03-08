@@ -14,7 +14,7 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Model {
 
 	[Table ("ChatCol")]
 	public class DbChatCollection {
-		[Key, Column (Order = 0)]
+		[Key, Column ("UID", Order = 0)]
 		//[ForeignKey ("NextCollection")]
 		//[ForeignKey ("PreviousCollection")]
 		public string ArchivingUserId { get; set; }
@@ -24,10 +24,10 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Model {
 		/// <summary>
 		/// Note that this DateTime, can only have seconds as smallest unit (see xep 0136 for details)
 		/// </summary>
-		[Key, Column (Order = 1)]
+		[Key, Column ("Start", Order = 1)]
 		public DateTime StartDate { get; set; }
         
-		[Key, Column (Order = 2)]
+		[Key, Column ("WJid", Order = 2)]
 		public string WithJid { get; set; }
 
 		public string Subject { get; set; }
@@ -55,9 +55,11 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Model {
 		/// Note that this DateTime, can only have seconds as smallest unit (see xep 0136 for details)
 		/// </summary>
 		//[ForeignKey ("NextCollection")]
+        [Column("NStart")]
 		public DateTime? NextStartDate { get; set; }
 
 		//[ForeignKey ("NextCollection")]
+        [Column("NWJid")]
 		public string NextWithJid { get; set; }
 
 		public virtual DbChatCollection NextCollection { get; set; }
@@ -66,9 +68,11 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Model {
 		/// Note that this DateTime, can only have seconds as smallest unit (see xep 0136 for details)
 		/// </summary>
 		//[ForeignKey ("PreviousCollection")]
+        [Column("PStart")]
 		public DateTime? PreviousStartDate { get; set; }
 
 		//[ForeignKey ("PreviousCollection")]
+        [Column("PWJid")]
 		public string PreviousWithJid { get; set; }
 		public virtual DbChatCollection PreviousCollection { get; set; }
 

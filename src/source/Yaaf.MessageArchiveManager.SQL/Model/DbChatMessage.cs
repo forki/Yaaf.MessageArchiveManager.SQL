@@ -50,15 +50,15 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Model {
 		[DatabaseGenerated (DatabaseGeneratedOption.Identity)]
 		public int MessageId { get; set; }
 		
-        [ForeignKey ("ChatCollection"), Column (Order = 1), Required]
+        [ForeignKey ("ChatCollection"), Column ("UID", Order = 1), Required]
 		public string CollectionArchivingUserId { get; set; }
 		/// <summary>
 		/// Note that this DateTime, can only have seconds as smallest unit (see xep 0136 for details)
 		/// </summary>
-		[ForeignKey ("ChatCollection"), Column (Order = 2), Required]
+		[ForeignKey ("ChatCollection"), Column ("Start", Order = 2), Required]
 		public DateTime CollectionStartDate { get; set; }
 
-		[ForeignKey ("ChatCollection"), Column (Order = 3), Required]
+		[ForeignKey ("ChatCollection"), Column ("WJid", Order = 3), Required]
 		public string CollectionWithJid { get; set; }
 
 

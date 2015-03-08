@@ -15,7 +15,7 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Model {
 	[Table ("ItemPref")]
 	public class DbUserItemPreference : SavingModeEntity {
 
-		[Key, Column (Order = 0)]
+		[Key, Column ("UID", Order = 0)]
 		public string ArchivingUserId { get; set; }
 		[ForeignKey ("ArchivingUserId ")]
 		public virtual DbArchivingUser ArchivingUser { get; set; }

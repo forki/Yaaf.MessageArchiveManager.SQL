@@ -24,10 +24,10 @@ type ApplicationDbTestContext() =
         if System.String.IsNullOrWhiteSpace env then "ArchiveDb_MySQL" else env)
     override x.Init() = System.Data.Entity.Database.SetInitializer(new NUnitInitializer<ApplicationDbTestContext>())
    
-    
+[<Ignore>]     
 [<TestFixture>]
 [<Category("MYSQL")>]
-type ``Test-Yaaf-Xmpp-IM-Sql-DbContext: Check that Sql backend is ok``() = 
+type ``Test-Yaaf-MessageArchiveManager-MySQL: Check that Sql backend is ok``() = 
     inherit MessageArchivingStoreTest()
     
     override x.Setup() =
@@ -41,3 +41,20 @@ type ``Test-Yaaf-Xmpp-IM-Sql-DbContext: Check that Sql backend is ok``() =
         context.SaveChanges() |> ignore
         let store = MessageArchivingStore(fun () -> new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext) :> IMessageArchivingStore
         store.GetArchiveStore (jid) |> waitTask
+
+[<TestFixture>]
+[<Category("MYSQL")>]
+type ``Test-Yaaf-MessageArchiveManager-MySQL: Test preference store MySQL backend``() = 
+    inherit PreferenceStoreTests()
+    
+    override x.Setup() =
+        // Fix for some bug, see http://stackoverflow.com/questions/15693262/serialization-exception-in-net-4-5
+        System.Configuration.ConfigurationManager.GetSection("dummy") |> ignore
+        base.Setup()
+
+    override x.CreatePreferenceStore(jid) = 
+        use context = new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext
+        context.Database.Delete() |> ignore
+        context.SaveChanges() |> ignore
+        let store = MessageArchivingStore(fun () -> new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext) :> IMessageArchivingStore
+        store.GetPreferenceStore (jid) |> waitTask

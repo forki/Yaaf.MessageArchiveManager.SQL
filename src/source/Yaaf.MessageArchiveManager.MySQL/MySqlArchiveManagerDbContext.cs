@@ -22,7 +22,7 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.MySql {
 		}
 
 		public MySqlArchiveManagerDbContext ()
-			: base ("ArchiveDb_MySql")
+			: base ("ArchiveDb_MySQL")
 		{
 		}
 

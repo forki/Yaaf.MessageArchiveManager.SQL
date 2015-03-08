@@ -30,8 +30,9 @@ type ApplicationDbTestContext() =
 //    inherit AbstractMessageArchivingDbContext("unittest")
 
 [<TestFixture>]
+[<Ignore>]
 [<Category("MSSQL")>]
-type ``Yaaf-Xmpp-MessageArchiveManager-Sql-DbContext``() = 
+type ``Test-Yaaf-MessageArchiveManager-SQL: Test archive store``() = 
     inherit MessageArchivingStoreTest()
 
     override x.Setup() =
@@ -45,3 +46,20 @@ type ``Yaaf-Xmpp-MessageArchiveManager-Sql-DbContext``() =
         context.SaveChanges() |> ignore
         let store = MessageArchivingStore(fun () -> new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext) :> IMessageArchivingStore
         store.GetArchiveStore (jid) |> waitTask
+
+[<TestFixture>]
+[<Category("MSSQL")>]
+type ``Test-Yaaf-MessageArchiveManager-SQL: Test preference store``() = 
+    inherit PreferenceStoreTests()
+
+    override x.Setup() =
+        // Fix for some bug, see http://stackoverflow.com/questions/15693262/serialization-exception-in-net-4-5
+        System.Configuration.ConfigurationManager.GetSection("dummy") |> ignore
+        base.Setup()
+
+    override x.CreatePreferenceStore(jid) = 
+        use context = new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext
+        context.Database.Delete() |> ignore
+        context.SaveChanges() |> ignore
+        let store = MessageArchivingStore(fun () -> new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext) :> IMessageArchivingStore
+        store.GetPreferenceStore(jid) |> waitTask
