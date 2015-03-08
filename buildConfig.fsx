@@ -60,6 +60,9 @@ let buildConfig =
           { p with
               Version = config.Version
               ReleaseNotes = toLines release.Notes
+              Project = "Yaaf.MessageArchiveManager.MySQL"
+              Summary = "A MySQL backend for Yaaf.MessageArchiveManager."
+              Description = "A MySQL backend for Yaaf.MessageArchiveManager."
               Dependencies = 
                 [ "Yaaf.MessageArchiveManager"
                   "Yaaf.FSharp.Helper"
