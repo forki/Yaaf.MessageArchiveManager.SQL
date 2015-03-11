@@ -16,12 +16,14 @@ open System.Data.Entity
 open Yaaf.Xmpp.MessageArchiveManager.Sql
 open Test.Yaaf.MessageArchiveManager
 open Yaaf.Xmpp.MessageArchiving
+open Yaaf.Xmpp.MessageArchiveManager.Sql.MySql
 
-[<DbConfigurationType (typeof<MySqlEFConfiguration>)>]
-type ApplicationDbTestContext() = 
-    inherit AbstractMessageArchivingDbContext(
-        let env = System.Environment.GetEnvironmentVariable ("connection_mysql")
-        if System.String.IsNullOrWhiteSpace env then "ArchiveDb_MySQL" else env)
+type ApplicationDbTestContext() as x = 
+    inherit MySqlArchiveManagerDbContext(
+      (let env = System.Environment.GetEnvironmentVariable ("connection_mysql")
+       if System.String.IsNullOrWhiteSpace env then "ArchiveDb_MySQL" else env), false)
+    do x.DoInit()
+
     override x.Init() = System.Data.Entity.Database.SetInitializer(new NUnitInitializer<ApplicationDbTestContext>())
    
 [<Ignore>]     

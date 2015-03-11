@@ -10,6 +10,7 @@ nuget Yaaf.MessageArchiveManager
 nuget Yaaf.FSharp.Helper
 
 nuget Yaaf.Database
+nuget Yaaf.Database.MySQL
 nuget EntityFramework == 6.0.2
 nuget Microsoft.AspNet.Identity.Core == 1.0.0
 nuget Microsoft.AspNet.Identity.EntityFramework == 1.0.0

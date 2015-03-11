@@ -17,9 +17,9 @@ open Swensen.Unquote
 open Foq
 open System.Data.Entity
 
-[<DbConfigurationType (typeof<EmptyConfiguration>)>]
-type ApplicationDbTestContext() =
-    inherit AbstractMessageArchivingDbContext(ApplicationDbTestContext.ConnectionName)
+type ApplicationDbTestContext() as x =
+    inherit MSSQLMessageArchivingDbContext(ApplicationDbTestContext.ConnectionName, false)
+    do x.DoInit()
 
     override x.Init() = System.Data.Entity.Database.SetInitializer(new NUnitInitializer<ApplicationDbTestContext>())
     static member ConnectionName

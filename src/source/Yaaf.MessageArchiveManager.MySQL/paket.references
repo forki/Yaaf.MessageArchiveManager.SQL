@@ -1,10 +1,5 @@
-﻿EntityFramework
-Microsoft.AspNet.Identity.Core
-Microsoft.AspNet.Identity.EntityFramework
-MySql.Data
-MySQL.Data.Entities
-
-Yaaf.MessageArchiveManager
+﻿Yaaf.MessageArchiveManager
 Yaaf.Database
+Yaaf.Database.MySQL
 FSharp.Core
 Yaaf.FSharp.Helper

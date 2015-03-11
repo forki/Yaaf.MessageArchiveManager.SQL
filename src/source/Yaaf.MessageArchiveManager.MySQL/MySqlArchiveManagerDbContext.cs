@@ -8,22 +8,27 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
+using Yaaf.Database.MySQL;
 
 namespace Yaaf.Xmpp.MessageArchiveManager.Sql.MySql {
 
 
 	[DbConfigurationType (typeof (MySqlEFConfiguration))]
 	public class MySqlArchiveManagerDbContext : AbstractMessageArchivingDbContext {
-		protected override void Init ()
+		public override void Init ()
 		{
 			DbConfiguration.SetConfiguration (new MySqlEFConfiguration ());
 			System.Data.Entity.Database.SetInitializer<MySqlArchiveManagerDbContext> (
-					   new MigrateDatabaseToLatestVersion<MySqlArchiveManagerDbContext, Yaaf.Xmpp.MessageArchiveManager.Sql.MySql.Migrations.Configuration> ());
+                       new MigrateDatabaseToLatestVersion<MySqlArchiveManagerDbContext, MySQLConfiguration<MySqlArchiveManagerDbContext>>());
 		}
 
-		public MySqlArchiveManagerDbContext ()
-			: base ("ArchiveDb_MySQL")
+		public MySqlArchiveManagerDbContext (string nameOrConnection, bool doInit = true)
+			: base (nameOrConnection, false)
 		{
+            if (doInit)
+            {
+                this.DoInit();
+            }
 		}
 
 		//public MySqlArchiveManagerDbContext (string nameOrConnection)

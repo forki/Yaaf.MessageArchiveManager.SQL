@@ -1,34 +1,21 @@
 namespace Yaaf.Xmpp.MessageArchiveManager.Sql.MySql.Migrations
 {
-	using global::MySql.Data.Entity;
-	using System;
-	using System.Data.Entity;
-	using System.Data.Entity.Migrations;
-	using System.Linq;
+    using global::MySql.Data.Entity;
+    using System;
+    using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Migrations;
+    using System.Linq;
+    using Yaaf.Database.MySQL;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Yaaf.Xmpp.MessageArchiveManager.Sql.MySql.MySqlArchiveManagerDbContext>
+    internal sealed class Configuration : MySQLConfiguration<MySqlArchiveManagerDbContext>
     {
-        public Configuration()
-		{
-			CodeGenerator = new MySqlMigrationCodeGenerator ();
-			SetSqlGenerator ("MySql.Data.MySqlClient", new MySqlMigrationSqlGenerator ());
-			AutomaticMigrationsEnabled = true;
-        }
-
-        protected override void Seed(Yaaf.Xmpp.MessageArchiveManager.Sql.MySql.MySqlArchiveManagerDbContext context)
+    }
+    public class MigrationsContextFactory : IDbContextFactory<MySqlArchiveManagerDbContext>
+    {
+        public MySqlArchiveManagerDbContext Create()
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            return new MySqlArchiveManagerDbContext("RosterStore_MySQL");
         }
     }
 }
