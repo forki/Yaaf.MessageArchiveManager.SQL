@@ -15,7 +15,7 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.MySql.Migrations
     {
         public MySqlArchiveManagerDbContext Create()
         {
-            return new MySqlArchiveManagerDbContext("RosterStore_MySQL");
+            return new MySqlArchiveManagerDbContext("ArchiveDb_MySQL");
         }
     }
 }
