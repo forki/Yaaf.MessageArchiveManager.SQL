@@ -45,14 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Migrations\201407241942553_Initial.cs" />
-    <Compile Include="Migrations\201407241942553_Initial.Designer.cs">
-      <DependentUpon>201407241942553_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201409292216250_AutomaticMigration.cs" />
-    <Compile Include="Migrations\201409292216250_AutomaticMigration.Designer.cs">
-      <DependentUpon>201409292216250_AutomaticMigration.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\201503111457204_0_0_1.cs" />
     <Compile Include="Migrations\201503111457204_0_0_1.Designer.cs">
       <DependentUpon>201503111457204_0_0_1.cs</DependentUpon>
@@ -67,12 +59,6 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201407241942553_Initial.resx">
-      <DependentUpon>201407241942553_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201409292216250_AutomaticMigration.resx">
-      <DependentUpon>201409292216250_AutomaticMigration.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201503111457204_0_0_1.resx">
       <DependentUpon>201503111457204_0_0_1.cs</DependentUpon>
     </EmbeddedResource>

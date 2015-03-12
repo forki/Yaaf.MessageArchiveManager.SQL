@@ -7,60 +7,87 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.MySql.Migrations
     {
         public override void Up()
         {
-            var now_string = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-            //DropForeignKey("ChatCol", new[] { "ArchivingUserId", "NextStartDate", "NextWithJid" }, "ChatCol");
-            //DropForeignKey("ChatCol", new[] { "ArchivingUserId", "PreviousStartDate", "PreviousWithJid" }, "ChatCol");
-            //DropIndex("ChatCol", new[] { "ArchivingUserId", "NextStartDate", "NextWithJid" });
-            //DropIndex("ChatCol", new[] { "ArchivingUserId", "PreviousStartDate", "PreviousWithJid" });
-            RenameColumn(table: "ChatCol", name: "ArchivingUserId", newName: "UID");
-            RenameColumn(table: "ChatCol", name: "StartDate", newName: "Start");
-            RenameColumn(table: "ChatCol", name: "WithJid", newName: "WJid");
-            RenameColumn(table: "ChatCol", name: "NextStartDate", newName: "NStart");
-            RenameColumn(table: "ChatCol", name: "NextWithJid", newName: "NWJid");
-            RenameColumn(table: "ChatCol", name: "PreviousStartDate", newName: "PStart");
-            RenameColumn(table: "ChatCol", name: "PreviousWithJid", newName: "PWJid");
-            RenameColumn(table: "ItemPref", name: "ArchivingUserId", newName: "UID");
-            RenameColumn(table: "ChMsg", name: "CollectionArchivingUserId", newName: "UID");
-            RenameColumn(table: "ChMsg", name: "CollectionStartDate", newName: "Start");
-            RenameColumn(table: "ChMsg", name: "CollectionWithJid", newName: "WJid");
-            AddColumn("ChatCol", "LastChanged", c => c.DateTime(nullable: false, precision: 0));
-            Sql(string.Format("UPDATE `ChatCol` SET `LastChanged` = '{0}' WHERE `LastChanged` = '0000-00-00 00:00:00';",
-                now_string));
-            CreateIndex("ChatCol", new[] { "UID", "NStart", "NWJid" });
-            Sql(";");
-            CreateIndex("ChatCol", new[] { "UID", "PStart", "PWJid" });
-            Sql(";");
-            AddForeignKey("ChatCol", new[] { "UID", "NStart", "NWJid" }, "ChatCol", new[] { "UID", "Start", "WJid" });
-            Sql(";");
-            AddForeignKey("ChatCol", new[] { "UID", "PStart", "PWJid" }, "ChatCol", new[] { "UID", "Start", "WJid" });
-            Sql(";");
-            DropColumn("ChMsg", "MessageState");
-            Sql(";");
+            CreateTable(
+                "ChatCol",
+                c => new
+                    {
+                        UID = c.String(nullable: false, maxLength: 128, unicode: false, storeType: "nvarchar"),
+                        Start = c.DateTime(nullable: false, precision: 0),
+                        WJid = c.String(nullable: false, maxLength: 128, unicode: false, storeType: "nvarchar"),
+                        Subject = c.String(unicode: false),
+                        Thread = c.String(unicode: false),
+                        Version = c.Int(nullable: false),
+                        IsDeleted = c.Boolean(nullable: false),
+                        NStart = c.DateTime(precision: 0),
+                        NWJid = c.String(maxLength: 128, unicode: false, storeType: "nvarchar"),
+                        PStart = c.DateTime(precision: 0),
+                        PWJid = c.String(maxLength: 128, unicode: false, storeType: "nvarchar"),
+                        XData = c.String(unicode: false),
+                        LastChanged = c.DateTime(nullable: false, precision: 0),
+                    })
+                .PrimaryKey(t => new { t.UID, t.Start, t.WJid });
+            
+            CreateTable(
+                "ArcUs",
+                c => new
+                    {
+                        UserId = c.String(nullable: false, maxLength: 128, unicode: false, storeType: "nvarchar"),
+                        AutomaticArchiving = c.Boolean(),
+                        DbAutoPreference = c.Int(nullable: false),
+                        DbLocalPreference = c.Int(nullable: false),
+                        DbManualPreference = c.Int(nullable: false),
+                        DbSaveMode = c.Int(nullable: false),
+                        DbOtrMode = c.Int(nullable: false),
+                        Expire = c.Long(),
+                    })
+                .PrimaryKey(t => t.UserId);
+            
+            CreateTable(
+                "ItemPref",
+                c => new
+                    {
+                        UID = c.String(nullable: false, maxLength: 128, unicode: false, storeType: "nvarchar"),
+                        Jid = c.String(nullable: false, maxLength: 128, unicode: false, storeType: "nvarchar"),
+                        DbSaveMode = c.Int(nullable: false),
+                        DbOtrMode = c.Int(nullable: false),
+                        Expire = c.Long(),
+                    })
+                .PrimaryKey(t => new { t.UID, t.Jid });
+            
+            CreateTable(
+                "ChMsg",
+                c => new
+                    {
+                        MessageId = c.Int(nullable: false, identity: true),
+                        UID = c.String(nullable: false, maxLength: 128, unicode: false, storeType: "nvarchar"),
+                        Start = c.DateTime(nullable: false, precision: 0),
+                        WJid = c.String(nullable: false, maxLength: 128, unicode: false, storeType: "nvarchar"),
+                        DbMessageType = c.Int(nullable: false),
+                        MessageDateTime = c.DateTime(nullable: false, precision: 0),
+                        DbContentType = c.Int(nullable: false),
+                        Content = c.String(unicode: false),
+                        DbMessageState = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.MessageId);
+            
         }
         
         public override void Down()
         {
-            AddColumn("ChMsg", "MessageState", c => c.Int(nullable: false));
-            DropForeignKey("ChatCol", new[] { "UID", "PStart", "PWJid" }, "ChatCol");
-            DropForeignKey("ChatCol", new[] { "UID", "NStart", "NWJid" }, "ChatCol");
+            DropForeignKey("ChatCol", "FK_dbo.ChatCol_dbo.ChatCol_UID_PStart_PWJid");
+            DropForeignKey("ChatCol", "FK_dbo.ChatCol_dbo.ChatCol_UID_NStart_NWJid");
+            DropForeignKey("ChMsg", "FK_dbo.ChMsg_dbo.ChatCol_UID_Start_WJid");
+            DropForeignKey("ChatCol", "FK_dbo.ChatCol_dbo.ArcUs_UID");
+            DropForeignKey("ItemPref", "FK_dbo.ItemPref_dbo.ArcUs_UID");
             DropIndex("ChatCol", new[] { "UID", "PStart", "PWJid" });
             DropIndex("ChatCol", new[] { "UID", "NStart", "NWJid" });
-            DropColumn("ChatCol", "LastChanged");
-            RenameColumn(table: "ChMsg", name: "WJid", newName: "CollectionWithJid");
-            RenameColumn(table: "ChMsg", name: "Start", newName: "CollectionStartDate");
-            RenameColumn(table: "ChMsg", name: "UID", newName: "CollectionArchivingUserId");
-            RenameColumn(table: "ItemPref", name: "UID", newName: "ArchivingUserId");
-            RenameColumn(table: "ChatCol", name: "PWJid", newName: "PreviousWithJid");
-            RenameColumn(table: "ChatCol", name: "PStart", newName: "PreviousStartDate");
-            RenameColumn(table: "ChatCol", name: "NWJid", newName: "NextWithJid");
-            RenameColumn(table: "ChatCol", name: "NStart", newName: "NextStartDate");
-            RenameColumn(table: "ChatCol", name: "WJid", newName: "WithJid");
-            RenameColumn(table: "ChatCol", name: "Start", newName: "StartDate");
-            RenameColumn(table: "ChatCol", name: "UID", newName: "ArchivingUserId");
-            CreateIndex("ChatCol", new[] { "ArchivingUserId", "PreviousStartDate", "PreviousWithJid" });
-            CreateIndex("ChatCol", new[] { "ArchivingUserId", "NextStartDate", "NextWithJid" });
-            AddForeignKey("ChatCol", new[] { "ArchivingUserId", "PreviousStartDate", "PreviousWithJid" }, "ChatCol", new[] { "ArchivingUserId", "StartDate", "WithJid" });
-            AddForeignKey("ChatCol", new[] { "ArchivingUserId", "NextStartDate", "NextWithJid" }, "ChatCol", new[] { "ArchivingUserId", "StartDate", "WithJid" });
+            DropIndex("ChMsg", new[] { "UID", "Start", "WJid" });
+            DropIndex("ChatCol", new[] { "UID" });
+            DropIndex("ItemPref", new[] { "UID" });
+            DropTable("ChMsg");
+            DropTable("ItemPref");
+            DropTable("ArcUs");
+            DropTable("ChatCol");
         }
     }
 }
