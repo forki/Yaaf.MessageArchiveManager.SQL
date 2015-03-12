@@ -45,10 +45,11 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Model
         [Column(Order = 5)]
         public int Version { get; set; }
 
-        ///// <summary>
-        ///// This is for replication, to request all collections changed since a specific date.
-        ///// </summary>
-        //public DateTime LastChanged { get; set; }
+        /// <summary>
+        /// This is for replication, to request all collections changed since a specific date.
+        /// </summary>
+        [Column(Order = 12)]
+        public DateTime LastChanged { get; set; }
 
         /// <summary>
         /// We do not delete DbChatCollection entries, because we need the deletion info for replication!

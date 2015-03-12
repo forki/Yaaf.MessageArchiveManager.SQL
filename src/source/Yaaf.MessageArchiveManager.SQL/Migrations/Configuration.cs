@@ -20,7 +20,7 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Migrations
     {
         public MSSQLMessageArchivingDbContext Create()
         {
-            return new MSSQLMessageArchivingDbContext("ArchiveDb_MSSQL");
+            return new MSSQLMessageArchivingDbContext("ArchiveDb_MSSQL", false);
         }
     }
 

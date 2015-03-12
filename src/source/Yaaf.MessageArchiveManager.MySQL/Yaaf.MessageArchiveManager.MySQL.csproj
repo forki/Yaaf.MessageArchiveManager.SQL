@@ -49,6 +49,14 @@
     <Compile Include="Migrations\201407241942553_Initial.Designer.cs">
       <DependentUpon>201407241942553_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201409292216250_AutomaticMigration.cs" />
+    <Compile Include="Migrations\201409292216250_AutomaticMigration.Designer.cs">
+      <DependentUpon>201409292216250_AutomaticMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201503111457204_0_0_1.cs" />
+    <Compile Include="Migrations\201503111457204_0_0_1.Designer.cs">
+      <DependentUpon>201503111457204_0_0_1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MySqlArchiveManagerDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,12 +69,21 @@
     <EmbeddedResource Include="Migrations\201407241942553_Initial.resx">
       <DependentUpon>201407241942553_Initial.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201409292216250_AutomaticMigration.resx">
+      <DependentUpon>201409292216250_AutomaticMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201503111457204_0_0_1.resx">
+      <DependentUpon>201503111457204_0_0_1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Yaaf.MessageArchiveManager.SQL\Yaaf.MessageArchiveManager.SQL.csproj">
       <Project>{c48bdfca-2e31-405a-85dd-f5178b124ab2}</Project>
       <Name>Yaaf.MessageArchiveManager.SQL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Fix_MySQL_Script.fsx" />
   </ItemGroup>
   <Import Project="$(CSharpTargetsPath)" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -18,14 +18,15 @@ open Test.Yaaf.MessageArchiveManager
 open Yaaf.Xmpp.MessageArchiving
 open Yaaf.Xmpp.MessageArchiveManager.Sql.MySql
 
+[<DbConfigurationType (typeof<MySqlEFConfiguration>)>]
 type ApplicationDbTestContext() as x = 
     inherit MySqlArchiveManagerDbContext(
       (let env = System.Environment.GetEnvironmentVariable ("connection_mysql")
        if System.String.IsNullOrWhiteSpace env then "ArchiveDb_MySQL" else env), false)
-    do x.DoInit()
+    do ()
+      //System.Data.Entity.Database.SetInitializer(new NUnitInitializer<ApplicationDbTestContext>())
+      //x.Database.Initialize(false)
 
-    override x.Init() = System.Data.Entity.Database.SetInitializer(new NUnitInitializer<ApplicationDbTestContext>())
-   
 [<Ignore>]     
 [<TestFixture>]
 [<Category("MYSQL")>]
@@ -38,9 +39,11 @@ type ``Test-Yaaf-MessageArchiveManager-MySQL: Check that Sql backend is ok``() =
         base.Setup()
 
     override x.CreateArchivingStore(jid) = 
+        System.Data.Entity.Database.SetInitializer<ApplicationDbTestContext>(null)
         use context = new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext
         context.Database.Delete() |> ignore
         context.SaveChanges() |> ignore
+        context.Upgrade()
         let store = MessageArchivingStore(fun () -> new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext) :> IMessageArchivingStore
         store.GetArchiveStore (jid) |> waitTask
 
@@ -55,8 +58,12 @@ type ``Test-Yaaf-MessageArchiveManager-MySQL: Test preference store MySQL backen
         base.Setup()
 
     override x.CreatePreferenceStore(jid) = 
+        System.Data.Entity.Database.SetInitializer<ApplicationDbTestContext>(null)
+
         use context = new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext
         context.Database.Delete() |> ignore
         context.SaveChanges() |> ignore
+        context.Upgrade()
+                
         let store = MessageArchivingStore(fun () -> new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext) :> IMessageArchivingStore
         store.GetPreferenceStore (jid) |> waitTask
