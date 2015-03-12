@@ -51,9 +51,7 @@ let buildConfig =
               Dependencies = 
                 [ "Yaaf.MessageArchiveManager"
                   "Yaaf.FSharp.Helper"
-                  "EntityFramework"
-                  "Microsoft.AspNet.Identity.Core"
-                  "Microsoft.AspNet.Identity.EntityFramework"
+                  "Yaaf.Database"
                   "FSharp.Core" ] 
                   |> List.map (fun name -> name, (GetPackageVersion "packages" name)) })
         "Yaaf.MessageArchiveManager.MySQL.nuspec", (fun config p ->
@@ -66,11 +64,7 @@ let buildConfig =
               Dependencies = 
                 [ "Yaaf.MessageArchiveManager"
                   "Yaaf.FSharp.Helper"
-                  "EntityFramework"
-                  "Microsoft.AspNet.Identity.Core"
-                  "Microsoft.AspNet.Identity.EntityFramework"
-                  "MySql.Data"
-                  "MySQL.Data.Entities"
+                  "Yaaf.Database.MySQL"
                   "FSharp.Core" ] 
                   |> List.map (fun name -> name, (GetPackageVersion "packages" name))
                   |> List.append [ config.ProjectName, config.Version ] }) ]
