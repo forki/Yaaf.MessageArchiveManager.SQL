@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,10 +17,6 @@ using Yaaf.Xmpp.MessageArchiveManager.Sql.Model;
 namespace Yaaf.Xmpp.MessageArchiveManager.Sql {
 	public abstract class AbstractMessageArchivingDbContext : Yaaf.Database.AbstractApplicationDbContext {
 
-		public AbstractMessageArchivingDbContext ()
-			: base ()
-		{
-		}
 
 		public AbstractMessageArchivingDbContext (string nameOrConnection)
 			: base (nameOrConnection)
@@ -62,23 +60,27 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql {
 		public DbSet<DbChatMessage> ChatMessages { get; set; }
 	}
 
-	[DbConfigurationType (typeof (EmptyConfiguration))]
-	public class MessageArchivingDbContext : AbstractMessageArchivingDbContext {
-		protected override void Init ()
-		{
-			DbConfiguration.SetConfiguration (new EmptyConfiguration ());
-			System.Data.Entity.Database.SetInitializer<MessageArchivingDbContext> (
-				   new MigrateDatabaseToLatestVersion<MessageArchivingDbContext, Yaaf.Xmpp.MessageArchiveManager.Sql.Migrations.Configuration> ());
-		}
+    [DbConfigurationType(typeof(EmptyConfiguration))]
+    public class MSSQLMessageArchivingDbContext : AbstractMessageArchivingDbContext
+    {
+        public MSSQLMessageArchivingDbContext(string nameOrConnection, bool doInit = true)
+            : base(nameOrConnection)
+        {
+            if (doInit)
+            {
+                DbConfiguration.SetConfiguration(new EmptyConfiguration());
+                System.Data.Entity.Database.SetInitializer<MSSQLMessageArchivingDbContext>(null);
+                this.Upgrade();
+            }
+        }
 
-		public MessageArchivingDbContext ()
-			: base ("ArchiveDb_MSSQL")
-		{
-		}
-
-		//public MessageArchivingDbContext (string nameOrConnection)
-		//	: base (nameOrConnection)
-		//{
-		//}
-	}
+        public override DbMigrator GetMigrator()
+        {
+            DbConfiguration.SetConfiguration(new EmptyConfiguration());
+            var config = new Yaaf.Xmpp.MessageArchiveManager.Sql.Migrations.Configuration();
+            config.TargetDatabase =
+                new DbConnectionInfo(this.Database.Connection.ConnectionString, "System.Data.SqlClient");
+            return new DbMigrator(config);
+        }
+    }
 }

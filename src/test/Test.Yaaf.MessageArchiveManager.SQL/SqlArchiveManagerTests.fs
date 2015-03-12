@@ -17,11 +17,11 @@ open Swensen.Unquote
 open Foq
 open System.Data.Entity
 
-[<DbConfigurationType (typeof<EmptyConfiguration>)>]
-type ApplicationDbTestContext() =
-    inherit AbstractMessageArchivingDbContext(ApplicationDbTestContext.ConnectionName)
-
-    override x.Init() = System.Data.Entity.Database.SetInitializer(new NUnitInitializer<ApplicationDbTestContext>())
+type ApplicationDbTestContext() as x =
+    inherit MSSQLMessageArchivingDbContext(ApplicationDbTestContext.ConnectionName, false)
+    do ()
+      //System.Data.Entity.Database.SetInitializer(new NUnitInitializer<ApplicationDbTestContext>())
+      //x.Upgrade()
     static member ConnectionName
       with get () =  
         let env = System.Environment.GetEnvironmentVariable ("connection_mssql")
@@ -41,9 +41,11 @@ type ``Test-Yaaf-MessageArchiveManager-SQL: Test archive store``() =
         base.Setup()
 
     override x.CreateArchivingStore(jid) = 
+        System.Data.Entity.Database.SetInitializer<ApplicationDbTestContext>(null)
         use context = new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext
         context.Database.Delete() |> ignore
         context.SaveChanges() |> ignore
+        context.Upgrade()
         let store = MessageArchivingStore(fun () -> new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext) :> IMessageArchivingStore
         store.GetArchiveStore (jid) |> waitTask
 
@@ -58,8 +60,10 @@ type ``Test-Yaaf-MessageArchiveManager-SQL: Test preference store``() =
         base.Setup()
 
     override x.CreatePreferenceStore(jid) = 
+        System.Data.Entity.Database.SetInitializer<ApplicationDbTestContext>(null)
         use context = new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext
         context.Database.Delete() |> ignore
         context.SaveChanges() |> ignore
+        context.Upgrade()
         let store = MessageArchivingStore(fun () -> new ApplicationDbTestContext() :> AbstractMessageArchivingDbContext) :> IMessageArchivingStore
         store.GetPreferenceStore(jid) |> waitTask

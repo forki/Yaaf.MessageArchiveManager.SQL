@@ -4,6 +4,7 @@
 // ----------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -68,6 +69,7 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Model {
 		public MessageType MessageType
 		{ get { return (MessageType) (DbMessageType); } set { DbMessageType = (int) value; } }
 
+        [DefaultValue(1)]
 		public int DbMessageType { get; set; }
 
 		public DateTime MessageDateTime { get; set; }
@@ -76,13 +78,16 @@ namespace Yaaf.Xmpp.MessageArchiveManager.Sql.Model {
 		public MessageContentType ContentType
 		{ get { return (MessageContentType) (DbContentType); } set { DbContentType = (int) value; } }
 
+        [DefaultValue(1)]
 		public int DbContentType { get; set; }
 
         public string Content { get; set; }
 
+        [NotMapped]
         public MessageState MessageState
         { get { return (MessageState)(DbMessageState); } set { DbMessageState = (int)value; } }
 
+        [DefaultValue(1)]
         public int DbMessageState { get; set; }
 	}
 }

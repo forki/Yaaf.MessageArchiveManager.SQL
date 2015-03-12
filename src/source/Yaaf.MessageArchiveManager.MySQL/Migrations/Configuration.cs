@@ -1,34 +1,31 @@
 namespace Yaaf.Xmpp.MessageArchiveManager.Sql.MySql.Migrations
 {
-	using global::MySql.Data.Entity;
-	using System;
-	using System.Data.Entity;
-	using System.Data.Entity.Migrations;
-	using System.Linq;
+    using global::MySql.Data.Entity;
+    using System;
+    using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Migrations;
+    using System.Linq;
+    using Yaaf.Database.MySQL;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Yaaf.Xmpp.MessageArchiveManager.Sql.MySql.MySqlArchiveManagerDbContext>
+    // Public, so that Fix_MySQL_Script.fsx can access it.
+    public sealed class Configuration : MySQLConfiguration<MySqlArchiveManagerDbContext>
     {
         public Configuration()
-		{
-			CodeGenerator = new MySqlMigrationCodeGenerator ();
-			SetSqlGenerator ("MySql.Data.MySqlClient", new MySqlMigrationSqlGenerator ());
-			AutomaticMigrationsEnabled = true;
-        }
-
-        protected override void Seed(Yaaf.Xmpp.MessageArchiveManager.Sql.MySql.MySqlArchiveManagerDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+        }
+    }
+    public class MigrationsContextFactory : IDbContextFactory<MySqlArchiveManagerDbContext> {
+        static MigrationsContextFactory()
+        {
+            // static constructors are guaranteed to only fire once per application.
+            // I do this here instead of App_Start so I can avoid including EF
+            // in my MVC project (I use UnitOfWork/Repository pattern instead)
+           DbConfiguration.SetConfiguration(new global::MySql.Data.Entity.MySqlEFConfiguration());
+        }
+        public MySqlArchiveManagerDbContext Create()
+        {
+            return new MySqlArchiveManagerDbContext("ArchiveDb_MySQL", false);
         }
     }
 }

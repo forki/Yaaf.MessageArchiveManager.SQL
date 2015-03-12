@@ -1,8 +1,76 @@
 ﻿// Weitere Informationen zu F# finden Sie unter http://fsharp.net. Im Projekt 'F#-Lernprogramm' finden Sie
 // einen Leitfaden zum Programmieren in F#.
 
-#load "Library1.fs"
-open Yaaf.Xmpp.IM.MySqlTest
+#r "System.IO.Compression"
+
+open System
+open System.IO
+open System.IO.Compression
+
+let modelBase64 = @"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
+"
+let bytes = Convert.FromBase64String(modelBase64.Replace("\n", "").Replace("\r",""))
+let decompress (bytes:byte array) =
+  use stream = new GZipStream(new MemoryStream(bytes), CompressionMode.Decompress)
+  let size = 4096
+  let buffer = Array.zeroCreate size
+  use mem = new MemoryStream()
+  let mutable count = 1
+  while count > 0 do
+    count <- stream.Read(buffer, 0, size)
+    if count > 0 then
+      mem.Write(buffer, 0, count)
+  mem.ToArray()
+
+let uncompressed = decompress(bytes)
+let edmx = System.Text.Encoding.UTF8.GetString(uncompressed)
+
 
 // Skriptcode für die Bibliothek hier definieren
 

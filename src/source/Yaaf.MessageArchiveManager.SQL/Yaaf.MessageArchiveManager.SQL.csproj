@@ -60,6 +60,10 @@
     <Compile Include="Migrations\201407241206388_Initial.Designer.cs">
       <DependentUpon>201407241206388_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201503111110033_0_0_1.cs" />
+    <Compile Include="Migrations\201503111110033_0_0_1.Designer.cs">
+      <DependentUpon>201503111110033_0_0_1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\DbArchivingUser.cs" />
     <Compile Include="Model\DbChatCollection.cs" />
@@ -69,11 +73,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201407241206388_Initial.resx">
       <DependentUpon>201407241206388_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201503111110033_0_0_1.resx">
+      <DependentUpon>201503111110033_0_0_1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
